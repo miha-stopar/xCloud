@@ -51,12 +51,29 @@ Run worker
 
 	docker build -t godocker-img .
 
+If some problems appear when building container, the following command executed on host might help:
+
+::
+
+        sysctl -w net.ipv4.ip_forward=1
+
 * run docker container:
 
 ::
 
 	docker run -d godocker-img
 
+*Worker* will be automatically started. You can connect to the container using SSH:
+
+::
+
+        ssh root@localhost -p 49164
+
+Find out the port number using the command:
+
+::
+
+        docker ps
 
 Run client
 =====

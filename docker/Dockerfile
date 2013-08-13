@@ -19,6 +19,9 @@ RUN go get github.com/alecthomas/gozmq
 #RUN apt-get install -y bzr # currently not needed for worker
 #RUN go get labix.org/v2/mgo/bson # currently not needed for worker
 
+RUN wget https://raw.github.com/miha-stopar/godocker/master/worker.go
+RUN go build worker.go 
+
 RUN apt-get install -y openssh-server supervisor
 ADD sshd.conf /etc/supervisor/conf.d/sshd.conf
 RUN mkdir -p /var/run/sshd
@@ -27,5 +30,5 @@ EXPOSE 22
 
 # the following command works when running docker as a daemon, but it doesn't when running docker interactively:
 CMD /usr/bin/supervisord -n 
-
+CMD ./worker -ip=192.237.169.230 -desc="this is a worker with libraries: ..."
 
