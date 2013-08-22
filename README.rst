@@ -7,7 +7,7 @@ A central *server* is needed to enable the communication between *clients* and *
 
 The system could be handy if you are running out of resources on your local machine and would like to delegate some tasks on *workers* (if they are available of course).
 
-.. image:: https://bitbucket.org/miha_stopar/xCloud/raw/tip/godocker.png
+.. image:: https://raw.github.com/miha-stopar/xCloud/master/godocker.png
 
 
 Run server
@@ -134,7 +134,7 @@ Run client
 	execute 0 ls -al	
 
 
-.. image:: https://bitbucket.org/miha_stopar/xCloud/raw/tip/godocker_screenshot.png
+.. image:: https://raw.github.com/miha-stopar/xCloud/master/godocker_screenshot.png
 
 Note
 =====
