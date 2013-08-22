@@ -2,13 +2,14 @@ package messages
 
 type Command struct {
   Name string
-  List ListWorkers ",omitempty"
+  ListWorkers ListWorkers ",omitempty"
   MyWorker MyWorker ",omitempty"
   Reserve ReserveWorker ",omitempty"
   Execute Exec ",omitempty"
 }
 
 type ListWorkers struct {
+    Uuid string
 }
 
 type MyWorker struct {

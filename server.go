@@ -9,6 +9,7 @@ import "labix.org/v2/mgo/bson"
 import zmq "github.com/alecthomas/gozmq"
 import "database/sql"
 import _ "github.com/go-sql-driver/mysql"
+import "xCloud/common"
 
 var workers map[string]string = make(map[string]string) // workerId : description
 var statusWorkers map[string]string = make(map[string]string) // workerId : status
@@ -33,7 +34,11 @@ func waitRegistrations(){
 }
 
 func serve() {
-  db, err := sql.Open("mysql", "kropdb:kropdb@/krop")
+  db, err := sql.Open("mysql", "xcu:xcp@/xcdb")
+  if err != nil {
+    fmt.Println("db error: %s", err)
+  }
+  db.Exec("CREATE TABLE IF NOT EXISTS audit (uuid VARCHAR(36), command VARCHAR(40));")
   context, _ := zmq.NewContext()
   socket, _ := context.NewSocket(zmq.REP)
   socket.Bind(fmt.Sprintf("%s:5000", address))
@@ -49,6 +54,7 @@ func serve() {
 
     switch string(output.Name) {
     case "listWorkers":
+ 	uuid := strings.TrimSpace(output.ListWorkers.Uuid)
 	workersRepr :=  make(map[string] string)
         for ind, desc := range workers{
 	  ownerClient := getClientBehindWorker(ind)
@@ -58,6 +64,8 @@ func serve() {
 	  }
 	  workersRepr[ind] = fmt.Sprintf("%s | %s | %s", statusWorkers[ind], occupied,  desc) 
 	} 
+ 	sCmd := fmt.Sprintf("INSERT INTO audit VALUES ('%s', 'listWorkers')", uuid)
+	db.Exec(sCmd)
 	data, _ := bson.Marshal(workersRepr)
     	socket.Send(data, 0)
     case "myWorker":
@@ -70,6 +78,8 @@ func serve() {
  	} else {
 	  reply = "please reserve worker first"
 	}
+ 	sCmd := fmt.Sprintf("INSERT INTO audit VALUES ('%s', 'myWorker')", uuid)
+	db.Exec(sCmd)
     	socket.Send([]byte(reply), 0)
     case "reserveWorker":
 	fmt.Println("reserveWorker")
@@ -90,6 +100,8 @@ func serve() {
  	  }
 	}
 	clientWorkers[uuid] = strings.TrimSpace(workerId)
+ 	sCmd := fmt.Sprintf("INSERT INTO audit VALUES ('%s', 'reserveWorker %s')", uuid, workerId)
+	db.Exec(sCmd)
 	socket.Send([]byte("ok"), 0)
     case "execute":
 	workerId := output.Execute.WorkerId
@@ -111,6 +123,8 @@ func serve() {
 	}
  	reply, err := delegate(workerId, output.Execute.Cmd)
 	fmt.Println(reply)
+ 	sCmd := fmt.Sprintf("INSERT INTO audit VALUES ('%s', 'execute %s %s')", uuid, workerId, output.Execute.Cmd)
+	db.Exec(sCmd)
         if err != nil {
     	  statusWorkers[workerId] = "disconnected"
 	  socket.Send([]byte("no answer"), 0)

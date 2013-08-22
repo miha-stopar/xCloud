@@ -8,7 +8,7 @@ import "strings"
 import "os/exec"
 import "labix.org/v2/mgo/bson"
 import zmq "github.com/alecthomas/gozmq"
-import "godocker/common"
+import "xCloud/common"
 
 var WorkerId string
 
@@ -18,7 +18,7 @@ func enterCmd(socket *zmq.Socket){
   command, _ := reader.ReadString('\n')
   parts := strings.Split(string(command), " ")
   if strings.Contains(parts[0], "listWorkers") {
-    l := messages.ListWorkers{}
+    l := messages.ListWorkers{uuid}
     c := messages.Command{"listWorkers", l, messages.MyWorker{}, messages.ReserveWorker{}, messages.Exec{}}
     data, _ := bson.Marshal(c)
     socket.Send(data, 0)
