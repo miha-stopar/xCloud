@@ -7,7 +7,8 @@ import "strconv"
 import "time"
 import "labix.org/v2/mgo/bson"
 import zmq "github.com/alecthomas/gozmq"
-import "godocker/common"
+import "database/sql"
+import _ "github.com/go-sql-driver/mysql"
 
 var workers map[string]string = make(map[string]string) // workerId : description
 var statusWorkers map[string]string = make(map[string]string) // workerId : status
@@ -32,6 +33,7 @@ func waitRegistrations(){
 }
 
 func serve() {
+  db, err := sql.Open("mysql", "kropdb:kropdb@/krop")
   context, _ := zmq.NewContext()
   socket, _ := context.NewSocket(zmq.REP)
   socket.Bind(fmt.Sprintf("%s:5000", address))

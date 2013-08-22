@@ -1,7 +1,7 @@
 About
 =====
 
-This is a simple system which exposes your Docker container (called *worker* in this context) to the outside world. 
+This is a framework which exposes your Docker container (called *worker* in this context) to the outside world. 
 Others (*clients*) can access its terminal and execute commands inside it.
 A central *server* is needed to enable the communication between *clients* and *workers*. In case you are not running *workers* and *clients* on the same subnet, the *server* needs to be running on a public IP.
 
@@ -26,6 +26,12 @@ Run server
 ::
 
 	go get labix.org/v2/mgo/bson
+	
+* install go-sql-driver:
+
+::
+
+	go get github.com/go-sql-driver/mysql
 
 * download godocker
 * build server.go:
