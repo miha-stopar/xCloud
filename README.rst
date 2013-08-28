@@ -7,7 +7,7 @@ A central *server* is needed to enable the communication between *clients* and *
 
 The system could be handy if you are running out of resources on your local machine and would like to delegate some tasks on *workers* (if they are available of course).
 
-.. image:: https://raw.github.com/miha-stopar/xCloud/master/godocker.png
+.. image:: https://raw.github.com/miha-stopar/xCloud/master/img/godocker.png
 
 
 Run server
@@ -55,12 +55,30 @@ Run server
 
 	./server -ip=192.168.1.12
 
+* install `collectd <http://collectd.org/>`_
+
+* configure collectd network plugin - /etc/collectd/collectd.conf has to contain (*workers* will connect collectd instance running on *server*):
+
+::
+
+	LoadPlugin "network"
+	<Plugin "network">
+  		Server "192.168.1.12"
+	</Plugin>
+
+* install `collectd-web <https://github.com/httpdss/collectd-web>`_
+* run collectd-web (graphs will be available on localhost:8888 once the *workers* will be running - see the image below showing some CPU statistics from Docker container)
+
+.. image:: https://raw.github.com/miha-stopar/xCloud/master/img/collectd-web.png
 
 Run worker
 =====
 
 * install docker
-* build docker container from a Dockerfile (execute the following command when in folder *xCloud/docker*) - you might add some libraries to be installed during the process and you need to modify the *ip* argument at the end of the Dockerfile (it has to be the *server* ip), also you might change the *desc* argument to reflect your changes related to the installed libraries:
+* download xCloud/docker directory
+* modify *ip* parameter at the end of the Dockerfile and *Server* parameter for network plugin in collectd.conf - both needs to be your *server* IP
+* you might add some additional libraries to be installed inside worker (do it in Dockerfile) and you might change the *worker* description accordingly (at the end of the Dockerfile)
+* build docker container from a Dockerfile (execute the following command when in folder *xCloud/docker*):
 
 ::
 
@@ -134,7 +152,7 @@ Run client
 	execute 0 ls -al	
 
 
-.. image:: https://raw.github.com/miha-stopar/xCloud/master/godocker_screenshot.png
+.. image:: https://raw.github.com/miha-stopar/xCloud/master/img/godocker_screenshot.png
 
 Note
 =====
