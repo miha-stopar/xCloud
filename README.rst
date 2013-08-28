@@ -7,7 +7,7 @@ A central *server* is needed to enable the communication between *clients* and *
 
 The system could be handy if you are running out of resources on your local machine and would like to delegate some tasks on *workers* (if they are available of course).
 
-.. image:: https://bitbucket.org/miha_stopar/godocker/raw/tip/godocker.png
+.. image:: https://raw.github.com/miha-stopar/xCloud/master/godocker.png
 
 
 Run server
@@ -33,7 +33,16 @@ Run server
 
 	go get github.com/go-sql-driver/mysql
 
-* download godocker
+* download xCloud
+
+* install MySQL, create database *xcdb*, add user *xcu* with password *xcp* (or change DB settings in server.go):
+
+::
+
+	create database xcdb;
+	create user 'xcu'@'localhost' identified by 'xcp';
+	GRANT ALL PRIVILEGES ON *.* TO 'xcu'@'localhost';
+
 * build server.go:
 
 ::
@@ -51,11 +60,11 @@ Run worker
 =====
 
 * install docker
-* build docker container from a Dockerfile (execute the following command when in folder *godocker/docker*) - you might add some libraries to be installed during the process and you need to modify the *ip* argument at the end of the Dockerfile (it has to be the *server* ip), also you might change the *desc* argument to reflect your changes related to the installed libraries:
+* build docker container from a Dockerfile (execute the following command when in folder *xCloud/docker*) - you might add some libraries to be installed during the process and you need to modify the *ip* argument at the end of the Dockerfile (it has to be the *server* ip), also you might change the *desc* argument to reflect your changes related to the installed libraries:
 
 ::
 
-	docker build -t godocker-img .
+	docker build -t xcloud-img .
 
 If some problems appear when building container, the following command executed on host might help:
 
@@ -67,7 +76,7 @@ If some problems appear when building container, the following command executed 
 
 ::
 
-	docker run -d godocker-img
+	docker run -d xcloud-img
 
 *Worker* will be automatically started. You can connect to the container using SSH:
 
@@ -87,7 +96,7 @@ Run client
 * install Go
 * install ZeroMQ
 * install gozmq and gobson
-* download godocker
+* download xCloud
 * build worker.go:
 
 ::
@@ -125,7 +134,7 @@ Run client
 	execute 0 ls -al	
 
 
-.. image:: https://bitbucket.org/miha_stopar/godocker/raw/tip/godocker_screenshot.png
+.. image:: https://raw.github.com/miha-stopar/xCloud/master/godocker_screenshot.png
 
 Note
 =====
