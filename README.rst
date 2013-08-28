@@ -57,17 +57,17 @@ Run server
 
 * install `collectd <http://collectd.org/>`_
 
-* configure collectd network plugin - /etc/collectd/collectd.conf has to contain (*workers* will connect collectd instance running on *server*):
+* configure collectd network plugin - /etc/collectd/collectd.conf has to contain:
 
 ::
 
 	LoadPlugin "network"
 	<Plugin "network">
-  		Server "192.168.1.12"
+  	    Server "192.168.1.12"
 	</Plugin>
 
 * install `collectd-web <https://github.com/httpdss/collectd-web>`_
-* run collectd-web (graphs will be available on localhost:8888 once the *workers* will be running - see the image below showing some CPU statistics from Docker container)
+* run collectd-web (graphs will be available on localhost:8888 once the *workers* will be running - see the image below showing some CPU statistics for Docker container)
 
 .. image:: https://raw.github.com/miha-stopar/xCloud/master/img/collectd-web.png
 
@@ -77,7 +77,7 @@ Run worker
 * install docker
 * download xCloud/docker directory
 * modify *ip* parameter at the end of the Dockerfile and *Server* parameter for network plugin in collectd.conf - both needs to be your *server* IP
-* you might add some additional libraries to be installed inside worker (do it in Dockerfile) and you might change the *worker* description accordingly (at the end of the Dockerfile)
+* you might add some additional libraries to be installed inside worker (see Dockerfile) and you might change the *worker* description accordingly (at the end of Dockerfile)
 * build docker container from a Dockerfile (execute the following command when in folder *xCloud/docker*):
 
 ::
