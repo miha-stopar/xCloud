@@ -115,13 +115,13 @@ Run client
 * install ZeroMQ
 * install gozmq and gobson
 * download xCloud
-* build worker.go:
+* build client.go:
 
 ::
 
-	go build worker.go
+	go build client.go
 
-* run *worker* - ip has to be the IP of a *server*: 
+* run *client* - ip has to be the IP of a *server*: 
 
 ::
 
