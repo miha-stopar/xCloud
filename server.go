@@ -110,8 +110,6 @@ func serve() {
 	  socket.Send([]byte("this worker does not exist"), 0)
 	  continue
 	}
-	fmt.Println(clientWorkers)
-	fmt.Println(uuid)
 	if val, ok := clientWorkers[uuid]; !ok{ 
 	  socket.Send([]byte("please reserve worker first"), 0)
 	  continue

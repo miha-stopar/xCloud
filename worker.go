@@ -45,17 +45,25 @@ func main() {
 
   for {
     datapt, _ := socket.Recv(0)
-    //fmt.Println(datapt)
-    temps := strings.Split(string(datapt), " ")
-    //fmt.Println(temps)
-    cmd := temps[1]
-    cmd = strings.Replace(cmd, "\n", "", -1)
-    //fmt.Println(cmd)
-    if cmd == "checkWorker"{
+    st := strings.Replace(string(datapt), "\n", "", -1)
+    temps := strings.Split(st, " ")
+    cmd := temps[1:]
+    if cmd[0] == "checkWorker"{
       csocket.Send([]byte("dummy"), 0)
       _, _ = csocket.Recv(0)
     } else {
-      response, err := exec.Command(cmd).Output()
+      command := strings.Join(cmd, " ")
+      fmt.Println(command)
+      var response []byte
+      var err error
+      if len(cmd) == 1 {
+        response, err = exec.Command(cmd[0]).Output()
+      } else if len(cmd) == 2 { 
+        response, err = exec.Command(cmd[0], cmd[1]).Output()
+      } else if len(cmd) == 3 { 
+        response, err = exec.Command(cmd[0], cmd[1], cmd[2]).Output()
+      }
+
       if err != nil {
         fmt.Println(err)
       }
