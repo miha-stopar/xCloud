@@ -1,11 +1,12 @@
 About
 =====
 
-This is a framework which exposes your Docker container (called *worker* in this context) to the outside world. 
-Others (*clients*) can access its terminal and execute commands inside it.
+Using xCloud:
+* in case your computer has some free resources you can start Docker container and expose it as a *worker* to the outside world
+* in case you lack processing power on your local machine you might check if some *workers* are available and if they are - you might locally run *client* to start exploiting their processing power
+
 A central *server* is needed to enable the communication between *clients* and *workers*. In case you are not running *workers* and *clients* on the same subnet, the *server* needs to be running on a public IP.
 
-The system could be handy if you are running out of resources on your local machine and would like to delegate some tasks on *workers* (if they are available of course).
 
 .. image:: https://raw.github.com/miha-stopar/xCloud/master/img/xcloud.png
 
