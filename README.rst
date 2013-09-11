@@ -2,6 +2,7 @@ About
 =====
 
 Using xCloud:
+
 * in case your computer has some free resources you can start Docker container and expose it as a *worker* to the outside world
 * in case you lack processing power on your local machine you might check if some *workers* are available and if they are - you might locally run *client* to start exploiting their processing power
 
