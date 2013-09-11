@@ -111,6 +111,33 @@ Find out the port number using the command:
 Run client
 =====
 
+If running *client* from Docker container:
+
+* install docker
+* download xCloud/docker-client directory
+* build docker container from a Dockerfile (execute the following command when in folder *xCloud/docker-client*):
+
+::
+
+	docker build -t xclient .
+
+* run docker container:
+
+::
+
+	docker run -d xclient
+
+* set GOPATH variable:
+
+::
+
+	export GOPATH=/srv/gocode
+
+* build *client* inside /srv/gocode/srv/xCloud
+* run *client* as described below
+
+Or install the following libraries if you don't want to run *client* from inside Docker container:
+
 * install Go
 * install ZeroMQ
 * install gozmq and gobson

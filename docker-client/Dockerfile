@@ -15,23 +15,21 @@ RUN apt-get install -y git-core
 RUN apt-get install -y gcc
 RUN apt-get install -y vim
 RUN apt-get install -y wget
-RUN apt-get install -y apache2 libconfig-general-perl librrds-perl libregexp-common-perl libhtml-parser-perl collectd-core
+RUN apt-get install -y uuid-runtime
 RUN go get github.com/alecthomas/gozmq
-#RUN apt-get install -y bzr # currently not needed for worker
-#RUN go get labix.org/v2/mgo/bson # currently not needed for worker
-
-RUN wget https://raw.github.com/miha-stopar/xcloud/master/worker.go
-RUN go build worker.go 
+RUN apt-get install -y bzr
+RUN go get labix.org/v2/mgo/bson
+RUN mkdir -p /srv/gocode/src/xCloud
+RUN git clone https://github.com/miha-stopar/xCloud /srv/gocode/src/xCloud
 
 RUN apt-get install -y openssh-server supervisor
 ADD sshd.conf /etc/supervisor/conf.d/sshd.conf
-ADD collectd-supervisor.conf /etc/supervisor/conf.d/collectd-supervisor.conf
-ADD collectd.conf /etc/collectd/collectd.conf
 RUN mkdir -p /var/run/sshd
 RUN echo root:krop | chpasswd
 EXPOSE 22
+# somehow this ENV command doesn't work
+# ENV GOPATH /srv/gocode
 
-CMD ./worker -ip=192.237.169.230 -desc="this is a worker with libraries: ..."
 # the following command works when running docker as a daemon, but it doesn't when running docker interactively:
 CMD /usr/bin/supervisord -n 
 
