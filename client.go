@@ -84,7 +84,7 @@ func main() {
   context, _ := zmq.NewContext()
   socket, _ := context.NewSocket(zmq.REQ)
   address = fmt.Sprintf("tcp://%s", *ip)
-  add := fmt.Sprintf("%s:5000", address)
+  add := fmt.Sprintf("%s:16653", address)
   socket.Connect(add)
   enterCmd(socket)
 }

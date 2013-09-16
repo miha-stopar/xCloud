@@ -15,7 +15,7 @@ func main() {
   address = fmt.Sprintf("tcp://%s", *ip)
   rcontext, _ := zmq.NewContext()
   rsocket, _ := rcontext.NewSocket(zmq.REQ)
-  rsocket.Connect(fmt.Sprintf("%s:5002", address))
+  rsocket.Connect(fmt.Sprintf("%s:16652", address))
   defer rcontext.Close()
   defer rsocket.Close()
   rsocket.Send([]byte(*desc), 0)
@@ -29,17 +29,17 @@ func main() {
   defer socket.Close()
 
   socket.SetSubscribe(string(worker_id))
-  socket.Connect(fmt.Sprintf("%s:5556", address))
+  socket.Connect(fmt.Sprintf("%s:16654", address))
 
   wcontext, _ := zmq.NewContext()
   wsocket, _ := wcontext.NewSocket(zmq.REQ)
-  wsocket.Connect(fmt.Sprintf("%s:6000", address))
+  wsocket.Connect(fmt.Sprintf("%s:16650", address))
   defer wcontext.Close()
   defer wsocket.Close()
 
   ccontext, _ := zmq.NewContext()
   csocket, _ := ccontext.NewSocket(zmq.REQ)
-  csocket.Connect(fmt.Sprintf("%s:6001", address))
+  csocket.Connect(fmt.Sprintf("%s:16651", address))
   defer ccontext.Close()
   defer csocket.Close()
 

@@ -18,7 +18,7 @@ var clientWorkers map[string]string = make(map[string] string) // client_uuid : 
 func waitRegistrations(){
   rcontext, _ := zmq.NewContext()
   rsocket, _ := rcontext.NewSocket(zmq.REP)
-  rsocket.Bind(fmt.Sprintf("%s:5002", address))
+  rsocket.Bind(fmt.Sprintf("%s:16652", address))
   defer rcontext.Close()
   defer rsocket.Close()
   for {
@@ -41,7 +41,7 @@ func serve() {
   db.Exec("CREATE TABLE IF NOT EXISTS audit (uuid VARCHAR(36), command VARCHAR(40));")
   context, _ := zmq.NewContext()
   socket, _ := context.NewSocket(zmq.REP)
-  socket.Bind(fmt.Sprintf("%s:5000", address))
+  socket.Bind(fmt.Sprintf("%s:16653", address))
   defer context.Close()
   defer socket.Close()
   fmt.Println("serving ... ")
@@ -189,21 +189,21 @@ func main() {
   psocket, _ = pcontext.NewSocket(zmq.PUB)
   defer pcontext.Close()
   defer psocket.Close()
-  psocket.Bind(fmt.Sprintf("%s:5556", address))
+  psocket.Bind(fmt.Sprintf("%s:16654", address))
 
   wcontext, _ := zmq.NewContext() // connected to workers
   wsocket, _ = wcontext.NewSocket(zmq.REP)
   wsocket.SetRcvTimeout(1000 * time.Millisecond)
   defer wcontext.Close()
   defer wsocket.Close()
-  wsocket.Bind(fmt.Sprintf("%s:6000", address))
+  wsocket.Bind(fmt.Sprintf("%s:16650", address))
 
   ccontext, _ := zmq.NewContext() // connected to workers
   csocket, _ = ccontext.NewSocket(zmq.REP)
   csocket.SetRcvTimeout(1000 * time.Millisecond)
   defer ccontext.Close()
   defer csocket.Close()
-  csocket.Bind(fmt.Sprintf("%s:6001", address))
+  csocket.Bind(fmt.Sprintf("%s:16651", address))
 
   go waitRegistrations()
   go serve()
