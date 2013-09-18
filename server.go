@@ -119,7 +119,7 @@ func serve() {
 	    continue
 	  }
 	}
- 	reply, err := delegate(workerId, output.Execute.Cmd)
+ 	reply, err := delegate(workerId, output.Execute.OpType, output.Execute.Cmd)
 	fmt.Println(reply)
  	sCmd := fmt.Sprintf("INSERT INTO audit VALUES ('%s', 'execute %s %s')", uuid, workerId, output.Execute.Cmd)
 	db.Exec(sCmd)
@@ -146,14 +146,14 @@ func getClientBehindWorker(workerId string) string {
   return uuid
 }
 
-func delegate(topic string, cmd string) (string, error) {
-  msg := fmt.Sprintf("%s %s", topic, cmd)
+func delegate(topic string, operation string, cmd string) (string, error) {
+  msg := fmt.Sprintf("%s %s %s", topic, operation, cmd)
   fmt.Println(msg)
   psocket.Send([]byte(msg), 0)
   reply, err := wsocket.Recv(0)
+  fmt.Println(reply)
   wsocket.Send([]byte("dummy"), 0)
   fmt.Println(err)
-  //fmt.Println(reply)
   return string(reply), err
 }
 
@@ -162,7 +162,6 @@ func checkWorkers(){
     time.Sleep(4000 * time.Millisecond)
     for ind, _ := range statusWorkers{
       msg := fmt.Sprintf("%s %s", ind, "checkWorker")
-      //fmt.Println(msg)
       psocket.Send([]byte(msg), 0)
       _, err := csocket.Recv(0)
       csocket.Send([]byte("dummy"), 0)
@@ -193,7 +192,7 @@ func main() {
 
   wcontext, _ := zmq.NewContext() // connected to workers
   wsocket, _ = wcontext.NewSocket(zmq.REP)
-  wsocket.SetRcvTimeout(1000 * time.Millisecond)
+  //wsocket.SetRcvTimeout(1000 * time.Millisecond)
   defer wcontext.Close()
   defer wsocket.Close()
   wsocket.Bind(fmt.Sprintf("%s:16650", address))

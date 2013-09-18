@@ -47,23 +47,36 @@ func main() {
     datapt, _ := socket.Recv(0)
     st := strings.Replace(string(datapt), "\n", "", -1)
     temps := strings.Split(st, " ")
+    if len(temps) < 2 { //todo: check when this happens
+      continue 
+    }
     cmd := temps[1:]
     if cmd[0] == "checkWorker"{
       csocket.Send([]byte("dummy"), 0)
       _, _ = csocket.Recv(0)
     } else {
+      opType := cmd[0]
+      cmd = cmd[1:]
+      fmt.Println(opType)
       command := strings.Join(cmd, " ")
       fmt.Println(command)
       var response []byte
       var err error
+      var ecmd *exec.Cmd
       if len(cmd) == 1 {
-        response, err = exec.Command(cmd[0]).Output()
+        ecmd = exec.Command(cmd[0])
       } else if len(cmd) == 2 { 
-        response, err = exec.Command(cmd[0], cmd[1]).Output()
+        ecmd = exec.Command(cmd[0], cmd[1])
       } else if len(cmd) == 3 { 
-        response, err = exec.Command(cmd[0], cmd[1], cmd[2]).Output()
+        ecmd = exec.Command(cmd[0], cmd[1], cmd[2])
       }
 
+      if opType == "output" {
+        response, err = ecmd.Output()
+      } else if opType == "start" {
+        err = ecmd.Start()
+      }
+      
       if err != nil {
         fmt.Println(err)
       }

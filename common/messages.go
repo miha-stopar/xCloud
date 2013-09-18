@@ -24,5 +24,6 @@ type ReserveWorker struct {
 type Exec struct {
     WorkerId string
     Cmd string
+    OpType string
     Uuid string
 }

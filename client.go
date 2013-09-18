@@ -50,19 +50,20 @@ func enterCmd(socket *zmq.Socket){
       fmt.Println(string(reply) + "\n")
       WorkerId = workerId
   }
-  } else if strings.Contains(parts[0], "execute") {
+  } else if (strings.Contains(parts[0], "start") || strings.Contains(parts[0], "output")){
     if len(parts) < 3 {
       fmt.Println("not enough arguments\n")
     } else {
       workerId := parts[1]
+      operation := parts[0]
       cmd := strings.Join(parts[2:], " ")
-      l := messages.Exec{workerId, cmd, uuid}
+      l := messages.Exec{workerId, cmd, operation, uuid}
       c := messages.Command{"execute", messages.ListWorkers{}, messages.MyWorker{},  messages.ReserveWorker{}, l}
       data, _ := bson.Marshal(c)
       socket.Send(data, 0)
       reply, _ := socket.Recv(0)
       fmt.Println(string(reply) + "\n")
-  }
+    }
   } else {
     fmt.Println("command not found\n")
   }
