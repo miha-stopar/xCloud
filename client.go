@@ -53,7 +53,6 @@ func enterCmd(socket *zmq.Socket){
     } else {
       operation := parts[0]
       cmd := strings.Join(parts[1:], " ")
-      fmt.Println(workerId)
       l := messages.Exec{workerId, cmd, operation, uuid}
       c := messages.Command{"execute", messages.ListWorkers{}, messages.MyWorker{},  messages.ReserveWorker{}, l}
       data, _ := bson.Marshal(c)

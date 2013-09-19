@@ -160,7 +160,7 @@ func delegate(topic string, operation string, cmd string) (string, error) {
 
 func checkWorkers(){
   for {
-    time.Sleep(4000 * time.Millisecond)
+    time.Sleep(1000 * time.Millisecond)
     for ind, _ := range statusWorkers{
       msg := fmt.Sprintf("%s %s", ind, "checkWorker")
       psocket.Send([]byte(msg), 0)
