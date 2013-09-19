@@ -185,7 +185,7 @@ Start client
 
 ::
 
-	execute 0 ls -al	
+	output ls -al	
 
 
 .. image:: https://raw.github.com/miha-stopar/xCloud/master/img/xcloud_screenshot.png
