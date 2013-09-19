@@ -27,7 +27,7 @@ func waitRegistrations(){
     workerId := strconv.Itoa(count)
     println(workerId)
     workers[string(workerId)] = string(workerDesc)
-    statusWorkers[string(workerId)] = "running"
+    statusWorkers[workerId] = "running"
     println("Got worker: ", string(workerDesc))
     rsocket.Send([]byte(workerId), 0)
   }
@@ -104,9 +104,10 @@ func serve() {
 	db.Exec(sCmd)
 	socket.Send([]byte("ok"), 0)
     case "execute":
-	workerId := output.Execute.WorkerId
+	workerId := strings.TrimSpace(output.Execute.WorkerId)
  	uuid := strings.TrimSpace(output.Execute.Uuid)
-	if _, ok := statusWorkers[workerId]; !ok{ 
+	if er, ok := statusWorkers[workerId]; !ok{ 
+	  fmt.Println(er)
 	  socket.Send([]byte("this worker does not exist"), 0)
 	  continue
 	}

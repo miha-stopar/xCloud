@@ -10,8 +10,6 @@ import "labix.org/v2/mgo/bson"
 import zmq "github.com/alecthomas/gozmq"
 import "xCloud/common"
 
-var WorkerId string
-
 func enterCmd(socket *zmq.Socket){
   reader := bufio.NewReader(os.Stdin)
   fmt.Print("Enter command: ")
@@ -41,22 +39,21 @@ func enterCmd(socket *zmq.Socket){
     if len(parts) < 2 {
       fmt.Println("not enough arguments\n")
     } else {
-      workerId := parts[1]
+      workerId = parts[1]
       l := messages.ReserveWorker{string(workerId), string(uuid)}
       c := messages.Command{"reserveWorker", messages.ListWorkers{}, messages.MyWorker{}, l, messages.Exec{}}
       data, _ := bson.Marshal(c)
       socket.Send(data, 0)
       reply, _ := socket.Recv(0)
       fmt.Println(string(reply) + "\n")
-      WorkerId = workerId
   }
   } else if (strings.Contains(parts[0], "start") || strings.Contains(parts[0], "output")){
-    if len(parts) < 3 {
+    if len(parts) < 2 {
       fmt.Println("not enough arguments\n")
     } else {
-      workerId := parts[1]
       operation := parts[0]
-      cmd := strings.Join(parts[2:], " ")
+      cmd := strings.Join(parts[1:], " ")
+      fmt.Println(workerId)
       l := messages.Exec{workerId, cmd, operation, uuid}
       c := messages.Command{"execute", messages.ListWorkers{}, messages.MyWorker{},  messages.ReserveWorker{}, l}
       data, _ := bson.Marshal(c)
@@ -71,6 +68,7 @@ func enterCmd(socket *zmq.Socket){
 }
 
 var uuid string
+var workerId string
 var ip *string = flag.String("ip", "127.0.0.1", "server IP address")
 var address string 
 

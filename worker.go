@@ -69,6 +69,10 @@ func main() {
         ecmd = exec.Command(cmd[0], cmd[1])
       } else if len(cmd) == 3 { 
         ecmd = exec.Command(cmd[0], cmd[1], cmd[2])
+      } else if len(cmd) == 4 { 
+        ecmd = exec.Command(cmd[0], cmd[1], cmd[2], cmd[3])
+      } else if len(cmd) == 5 { 
+        ecmd = exec.Command(cmd[0], cmd[1], cmd[2], cmd[3], cmd[4])
       }
 
       if opType == "output" {

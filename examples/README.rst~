@@ -1,8 +1,6 @@
 About
 =====
 
-NOTE: xCloud is under development.
-
 Using xCloud:
 
 * in case your computer has some free resources you can start Docker container and expose it as a *worker* to the outside world
