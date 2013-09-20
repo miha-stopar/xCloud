@@ -50,7 +50,6 @@ func main() {
     if len(temps) < 2 { //todo: check when this happens
       continue 
     }
-    fmt.Println(temps)
     if temps[1] == "checkWorker"{
       csocket.Send([]byte("dummy"), 0)
       _, _ = csocket.Recv(0)
@@ -79,8 +78,17 @@ func main() {
       if opType == "output" {
         response, err = ecmd.Output()
       } else if opType == "start" {
-        err = ecmd.Start()
-	response = []byte("command started")
+        error := ecmd.Start()
+	if error != nil {
+	  response = []byte("error when starting a command")	
+	} else {
+	  error = ecmd.Wait()
+	  if error != nil {
+	    response = []byte("error when executing a command")	
+	  } else {
+	    response = []byte("command execution finished")	
+	  }
+	}
       }
       
       if err != nil {
