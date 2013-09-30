@@ -63,18 +63,10 @@ func main() {
       var response []byte
       var err error
       var ecmd *exec.Cmd
-      if len(cmd) == 1 {
-        ecmd = exec.Command(cmd[0])
-      } else if len(cmd) == 2 { 
-        ecmd = exec.Command(cmd[0], cmd[1])
-      } else if len(cmd) == 3 { 
-        ecmd = exec.Command(cmd[0], cmd[1], cmd[2])
-      } else if len(cmd) == 4 { 
-        ecmd = exec.Command(cmd[0], cmd[1], cmd[2], cmd[3])
-      } else if len(cmd) == 5 { 
-        ecmd = exec.Command(cmd[0], cmd[1], cmd[2], cmd[3], cmd[4])
-      }
-
+      fmt.Println(cmd[0])
+      fmt.Println(cmd[1:])
+      ecmd = exec.Command(cmd[0], cmd[1:]...)
+      
       if opType == "output" {
         response, err = ecmd.Output()
       } else if opType == "start" {

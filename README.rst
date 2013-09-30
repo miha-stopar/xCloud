@@ -80,8 +80,9 @@ Run worker
 
 * install docker
 * download xCloud/docker directory
-* modify *ip* parameter at the end of the Dockerfile and *Server* parameter for network plugin in collectd.conf - both needs to be your *server* IP
+* modify *ip* parameter at the end of the Dockerfile (needs to be the central *server* IP) and SSH username/password (see *chpasswd*)
 * you might add some additional libraries to be installed inside worker (see Dockerfile) and you might change the *worker* description accordingly (at the end of Dockerfile)
+* modify *Server* parameter for network plugin in collectd.conf (needs to be the central *server* IP)
 * build docker container from a Dockerfile (execute the following command when in folder *xCloud/docker*):
 
 ::

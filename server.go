@@ -85,9 +85,14 @@ func serve() {
 	fmt.Println("reserveWorker")
 	workerId := strings.TrimSpace(output.Reserve.WorkerId)
         uuid := strings.TrimSpace(output.Reserve.Uuid)
-	if _, ok := statusWorkers[workerId]; !ok{ 
+	if status, ok := statusWorkers[workerId]; !ok{ 
 	  socket.Send([]byte("this worker does not exist"), 0)
 	  continue
+	} else {
+	  if status != "running"{
+	    socket.Send([]byte("this worker is not running at the moment"), 0)
+	    continue
+	  }
 	}
 	if _, ok := clientWorkers[uuid]; ok{ 
 	  socket.Send([]byte("this client already has a worker"), 0)
@@ -98,13 +103,17 @@ func serve() {
 	    socket.Send([]byte("this worker is already reserved"), 0)
 	    continue
  	  }
-	}
+	} 	
 	clientWorkers[uuid] = strings.TrimSpace(workerId)
  	sCmd := fmt.Sprintf("INSERT INTO audit VALUES ('%s', 'reserveWorker %s')", uuid, workerId)
 	db.Exec(sCmd)
 	socket.Send([]byte("ok"), 0)
     case "execute":
 	workerId := strings.TrimSpace(output.Execute.WorkerId)
+	if len(workerId) == 0{
+	  socket.Send([]byte("worker not specified"), 0)
+	  continue
+	}
  	uuid := strings.TrimSpace(output.Execute.Uuid)
 	if er, ok := statusWorkers[workerId]; !ok{ 
 	  fmt.Println(er)
@@ -120,7 +129,8 @@ func serve() {
 	    continue
 	  }
 	}
- 	reply, err := delegate(workerId, output.Execute.OpType, output.Execute.Cmd)
+	cmd := strings.TrimSpace(output.Execute.Cmd)
+ 	reply, err := delegate(workerId, output.Execute.OpType, cmd)
 	fmt.Println(reply)
  	sCmd := fmt.Sprintf("INSERT INTO audit VALUES ('%s', 'execute %s %s')", uuid, workerId, output.Execute.Cmd)
 	db.Exec(sCmd)
@@ -149,12 +159,12 @@ func getClientBehindWorker(workerId string) string {
 
 func delegate(topic string, operation string, cmd string) (string, error) {
   msg := fmt.Sprintf("%s %s %s", topic, operation, cmd)
-  fmt.Println(msg)
+  //fmt.Println(msg)
   psocket.Send([]byte(msg), 0)
   reply, err := wsocket.Recv(0)
-  fmt.Println(reply)
+  //fmt.Println(reply)
   wsocket.Send([]byte("dummy"), 0)
-  fmt.Println(err)
+  //fmt.Println(err)
   return string(reply), err
 }
 

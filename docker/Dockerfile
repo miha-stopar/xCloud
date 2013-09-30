@@ -31,7 +31,7 @@ RUN mkdir -p /var/run/sshd
 RUN echo root:krop | chpasswd
 EXPOSE 22
 
-CMD ./worker -ip=192.237.169.230 -desc="this is a worker with libraries: ..."
 # the following command works when running docker as a daemon, but it doesn't when running docker interactively:
 CMD /usr/bin/supervisord -n 
+CMD ./worker -ip=192.168.1.11 -desc="this is a worker with libraries: ..."
 
