@@ -21,7 +21,7 @@ func main() {
   rsocket.Send([]byte(*desc), 0)
   w_id, _ := rsocket.Recv(0)
   worker_id := string(w_id)
-  fmt.Println(worker_id)
+  //fmt.Println(worker_id)
 
   context, _ := zmq.NewContext()
   socket, _ := context.NewSocket(zmq.SUB)
@@ -57,14 +57,12 @@ func main() {
       cmd := temps[1:]
       opType := cmd[0]
       cmd = cmd[1:]
-      fmt.Println(opType)
-      command := strings.Join(cmd, " ")
-      fmt.Println(command)
+      //fmt.Println(opType)
       var response []byte
       var err error
       var ecmd *exec.Cmd
-      fmt.Println(cmd[0])
-      fmt.Println(cmd[1:])
+      //fmt.Println(cmd[0])
+      //fmt.Println(cmd[1:])
       ecmd = exec.Command(cmd[0], cmd[1:]...)
       
       if opType == "output" {
@@ -84,7 +82,7 @@ func main() {
       }
       
       if err != nil {
-        fmt.Println(err)
+        //fmt.Println(err)
       }
       wsocket.Send([]byte(response), 0)
       _, _ = wsocket.Recv(0)

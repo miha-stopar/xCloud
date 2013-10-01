@@ -3,6 +3,7 @@ package main
 import "fmt"
 import "flag"
 import "os/exec"
+import "strings"
 import "labix.org/v2/mgo/bson"
 import zmq "github.com/alecthomas/gozmq"
 import "xCloud/common"
@@ -26,14 +27,14 @@ func main() {
   add := fmt.Sprintf("%s:16653", address)
   socket.Connect(add)
 
-  l1 := messages.ReserveWorker{"0", uuid}
+  l1 := messages.ReserveWorker{*workerId, uuid}
   c1 := messages.Command{"reserveWorker", messages.ListWorkers{}, messages.MyWorker{}, l1, messages.Exec{}}
   data, _ := bson.Marshal(c1)
   socket.Send(data, 0)
   socket.Recv(0)
 
-  operation := "output"
-  cmd := "ls"
+  operation := "start"
+  cmd := "wget https://raw.github.com/miha-stopar/xCloud/master/tests/basic/worker2.py"
   l2 := messages.Exec{*workerId, cmd, operation, uuid}
   c2 := messages.Command{"execute", messages.ListWorkers{}, messages.MyWorker{},  messages.ReserveWorker{}, l2}
   data, _ = bson.Marshal(c2)
@@ -41,4 +42,22 @@ func main() {
   reply, _ := socket.Recv(0)
   fmt.Println(string(reply) + "\n")
 
+  operation = "output"
+  cmd = "python worker2.py"
+  l2 = messages.Exec{*workerId, cmd, operation, uuid}
+  c2 = messages.Command{"execute", messages.ListWorkers{}, messages.MyWorker{},  messages.ReserveWorker{}, l2}
+  data, _ = bson.Marshal(c2)
+  socket.Send(data, 0)
+  reply, _ = socket.Recv(0)
+  rep := strings.TrimSpace(string(reply))
+  fmt.Println(rep + "\n")
+  if string(rep) != "2" {
+    fmt.Println("WRONG!")
+  } else {
+    fmt.Println("RIGHT!")
+  }
 }
+
+
+
+
