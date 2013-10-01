@@ -5,7 +5,6 @@ import "flag"
 import "bufio"
 import "os"
 import "strings"
-import "os/exec"
 import "labix.org/v2/mgo/bson"
 import zmq "github.com/alecthomas/gozmq"
 import "xCloud/common"
@@ -16,8 +15,7 @@ func enterCmd(socket *zmq.Socket){
   command, _ := reader.ReadString('\n')
   parts := strings.Split(string(command), " ")
   if strings.Contains(parts[0], "listWorkers") {
-    l := messages.ListWorkers{uuid}
-    c := messages.Command{"listWorkers", l, messages.MyWorker{}, messages.ReserveWorker{}, messages.Exec{}}
+    c := messages.Command{"listWorkers", uuid, messages.ListWorkers{}, messages.MyWorker{}, messages.ReserveWorker{}, messages.Exec{}}
     data, _ := bson.Marshal(c)
     socket.Send(data, 0)
     reply, _ := socket.Recv(0)
@@ -28,8 +26,8 @@ func enterCmd(socket *zmq.Socket){
       fmt.Printf("%s: %s\n\n", string(k), v)
     }
   } else if strings.Contains(parts[0], "myWorker") {
-    l := messages.MyWorker{uuid}
-    c := messages.Command{"myWorker", messages.ListWorkers{}, l, messages.ReserveWorker{}, messages.Exec{}}
+    l := messages.MyWorker{}
+    c := messages.Command{"myWorker", uuid, messages.ListWorkers{}, l, messages.ReserveWorker{}, messages.Exec{}}
     data, _ := bson.Marshal(c)
     socket.Send(data, 0)
     reply, _ := socket.Recv(0)
@@ -40,8 +38,8 @@ func enterCmd(socket *zmq.Socket){
       fmt.Println("not enough arguments\n")
     } else {
       workerId = parts[1]
-      l := messages.ReserveWorker{string(workerId), string(uuid)}
-      c := messages.Command{"reserveWorker", messages.ListWorkers{}, messages.MyWorker{}, l, messages.Exec{}}
+      l := messages.ReserveWorker{string(workerId)}
+      c := messages.Command{"reserveWorker", uuid, messages.ListWorkers{}, messages.MyWorker{}, l, messages.Exec{}}
       data, _ := bson.Marshal(c)
       socket.Send(data, 0)
       reply, _ := socket.Recv(0)
@@ -53,8 +51,8 @@ func enterCmd(socket *zmq.Socket){
     } else {
       operation := parts[0]
       cmd := strings.Join(parts[1:], " ")
-      l := messages.Exec{workerId, cmd, operation, uuid}
-      c := messages.Command{"execute", messages.ListWorkers{}, messages.MyWorker{},  messages.ReserveWorker{}, l}
+      l := messages.Exec{workerId, cmd, operation}
+      c := messages.Command{"execute", uuid, messages.ListWorkers{}, messages.MyWorker{},  messages.ReserveWorker{}, l}
       data, _ := bson.Marshal(c)
       socket.Send(data, 0)
       reply, _ := socket.Recv(0)
@@ -73,12 +71,7 @@ var address string
 
 func main() {
   flag.Parse();
-  u, err := exec.Command("uuidgen").Output()
-  if err != nil {
-    fmt.Println(err)
-  } else {
-    uuid = string(u)
-  }
+  uuid = "b1f8cec0-9b38-41a9-8aee-6e31f962ba32"
   context, _ := zmq.NewContext()
   socket, _ := context.NewSocket(zmq.REQ)
   address = fmt.Sprintf("tcp://%s", *ip)

@@ -36,25 +36,33 @@ func waitRegistrations(){
 func serve() {
   db, err := sql.Open("mysql", "xcu:xcp@/xcdb")
   if err != nil {
-    fmt.Println("db error: %s", err)
+    //fmt.Println("db error: %s", err)
   }
   db.Exec("CREATE TABLE IF NOT EXISTS audit (uuid VARCHAR(36), command VARCHAR(40));")
+  db.Exec("CREATE TABLE IF NOT EXISTS uuids (uuid VARCHAR(36));")
   context, _ := zmq.NewContext()
   socket, _ := context.NewSocket(zmq.REP)
   socket.Bind(fmt.Sprintf("%s:16653", address))
   defer context.Close()
   defer socket.Close()
-  fmt.Println("serving ... ")
   
   for {
     msg, _ := socket.Recv(0)
     var output messages.Command
     err := bson.Unmarshal(msg, &output)
-    fmt.Println("Received error: %s", err)
-
+    if err != nil {
+      //fmt.Println("Received error: %s", err)
+    }
+    uuid := strings.TrimSpace(output.Uuid)
+    sCmd := fmt.Sprintf("select * from uuids where uuid='%s'", uuid)
+    rows, _ := db.Query(sCmd)
+    if rows.Next(){
+    } else {
+      socket.Send([]byte("please check your uuid"), 0)
+      continue
+    }
     switch string(output.Name) {
     case "listWorkers":
- 	uuid := strings.TrimSpace(output.ListWorkers.Uuid)
 	workersRepr :=  make(map[string] string)
         for ind, desc := range workers{
 	  ownerClient := getClientBehindWorker(ind)
@@ -70,9 +78,6 @@ func serve() {
     	socket.Send(data, 0)
     case "myWorker":
 	var reply string
- 	uuid := strings.TrimSpace(output.MyWorker.Uuid)
-	fmt.Println(clientWorkers)
-	fmt.Println(uuid)
 	if val, ok := clientWorkers[uuid]; ok { 
 	  reply = fmt.Sprintf("%s | %s | %s", val, statusWorkers[val], workers[val]) 
  	} else {
@@ -82,9 +87,7 @@ func serve() {
 	db.Exec(sCmd)
     	socket.Send([]byte(reply), 0)
     case "reserveWorker":
-	fmt.Println("reserveWorker")
 	workerId := strings.TrimSpace(output.Reserve.WorkerId)
-        uuid := strings.TrimSpace(output.Reserve.Uuid)
 	if status, ok := statusWorkers[workerId]; !ok{ 
 	  socket.Send([]byte("this worker does not exist"), 0)
 	  continue
@@ -114,9 +117,7 @@ func serve() {
 	  socket.Send([]byte("worker not specified"), 0)
 	  continue
 	}
- 	uuid := strings.TrimSpace(output.Execute.Uuid)
-	if er, ok := statusWorkers[workerId]; !ok{ 
-	  fmt.Println(er)
+	if _, ok := statusWorkers[workerId]; !ok{ 
 	  socket.Send([]byte("this worker does not exist"), 0)
 	  continue
 	}
@@ -131,7 +132,7 @@ func serve() {
 	}
 	cmd := strings.TrimSpace(output.Execute.Cmd)
  	reply, err := delegate(workerId, output.Execute.OpType, cmd)
-	fmt.Println(reply)
+	//fmt.Println(reply)
  	sCmd := fmt.Sprintf("INSERT INTO audit VALUES ('%s', 'execute %s %s')", uuid, workerId, output.Execute.Cmd)
 	db.Exec(sCmd)
         if err != nil {
@@ -141,7 +142,7 @@ func serve() {
 	  socket.Send([]byte(reply), 0)
 	}
     default:
-        fmt.Println("command not known")
+        //fmt.Println("command not known")
     }
   }
 }
