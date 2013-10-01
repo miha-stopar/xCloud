@@ -34,7 +34,7 @@ func main() {
   socket.Recv(0)
 
   operation := "start"
-  cmd := "wget https://raw.github.com/miha-stopar/xCloud/master/tests/basic/worker0.py"
+  cmd := "wget https://raw.github.com/miha-stopar/xCloud/master/examples/multiple-basic/worker0.py"
   l2 := messages.Exec{*workerId, cmd, operation, uuid}
   c2 := messages.Command{"execute", messages.ListWorkers{}, messages.MyWorker{},  messages.ReserveWorker{}, l2}
   data, _ = bson.Marshal(c2)
