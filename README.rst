@@ -59,6 +59,13 @@ Run server
 
 	./server -ip=192.168.1.12
 
+* at the moment there is only a primitive authentication available for a client that wants to connect to the server - a client uuid needs to be registered manually in the DB (uuids table is created when *server* is started):
+
+::
+
+	insert into uuids values ("b1f8cec0-9b38-41a9-8aee-6e31f962ba32");
+
+
 * install `collectd <http://collectd.org/>`_
 
 * configure collectd network plugin - /etc/collectd/collectd.conf has to contain:
@@ -95,7 +102,7 @@ If some problems appear when building container, the following command executed 
 
         sysctl -w net.ipv4.ip_forward=1
 
-* run docker container:
+* run docker container (you might want to limit the CPU and RAM of the container using *-c* and *-m* options):
 
 ::
 
@@ -116,7 +123,9 @@ Find out the port number using the command:
 Run client
 =====
 
-Run client from Docker container:
+There are two possibilities:
+
+Run client from within Docker container:
 -------------------------------
 
 * install docker
@@ -139,8 +148,14 @@ Run client from Docker container:
 
 	export GOPATH=/srv/gocode
 
-* build *client* inside /srv/gocode/srv/xCloud
-* start and use *client* as described below
+* configure uuid in the client.go inside /srv/gocode/srv/xCloud (uuid needs to be registered manually in the *server* database)
+* build client.go:
+
+::
+
+	go build client.go
+
+* start *client*
 
 Run client without Docker container:
 -------------------------------
@@ -149,13 +164,16 @@ Run client without Docker container:
 * install ZeroMQ
 * install gozmq and gobson
 * download xCloud
+* configure uuid in the client.go (uuid needs to be registered manually in the *server* database)
 * build client.go:
 
 ::
 
 	go build client.go
 
-Start client
+* start *client*
+
+How to start and use client
 -------------------------------
 
 * run *client* - ip has to be the IP of a *server*: 
