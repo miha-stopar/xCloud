@@ -13,6 +13,8 @@ A central *server* is needed to enable the communication between *clients* and *
 
 .. image:: https://raw.github.com/miha-stopar/xCloud/master/img/xcloud.png
 
+There is no guarantee that *workers* will be working without interrupts - *workers* might come and go, similar as it is the case for Amazon Spot Instances. Thus, some tasks that will be delegated to some of the *workers* might need to be re-executed.
+
 
 Run server
 =====
@@ -210,7 +212,7 @@ How to start and use client
 .. image:: https://raw.github.com/miha-stopar/xCloud/master/img/xcloud_screenshot.png
 
 How to use client programmatically
-=====
+-------------------------------
 Please see examples folder.
 
 Note
