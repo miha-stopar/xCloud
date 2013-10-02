@@ -209,6 +209,10 @@ How to start and use client
 
 .. image:: https://raw.github.com/miha-stopar/xCloud/master/img/xcloud_screenshot.png
 
+How to use client programmatically
+=====
+Please see examples folder.
+
 Note
 =====
 
